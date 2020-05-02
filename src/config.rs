@@ -26,7 +26,7 @@ impl KafkaConfig {
 }
 
 pub fn get(key: String) -> Option<KafkaConfig> {
-    match dirs::home_dir() {
+    return match dirs::home_dir() {
         Some(path) => {
             let contents = fs::read_to_string(format!("{}/.kafka/.config", path.display()))
                 .expect("Something went wrong reading the file");
@@ -34,13 +34,14 @@ pub fn get(key: String) -> Option<KafkaConfig> {
                 serde_json::from_str(&contents).expect("JSON was not well-formatted");
             let result: Vec<&KafkaConfig> = configs.iter().filter(|c| c.name == key).collect();
             if result.len() != 0 {
-                return Some(result[0].clone());
+                Some(result[0].clone())
             } else {
-                return None
+                None
             }
         }
         None => {
             println!("Impossible to get your home dir!");
-            return None;
+            None
         }
-    }}
+    }
+}
